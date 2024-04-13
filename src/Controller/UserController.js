@@ -13,8 +13,9 @@ const register = async (req, res) => {
         !req.body.password
     ) {
         res.status(400).json({ error: 'Missing fields' })
+        console.log('erreur 400')
     }
-    const hashedPassword = await bcrypt.hash(req.body.password, 12)
+    const hashedPassword = await bcrypt.hash(req.body.password + '', 10)
     try {
         let user = new User(
             req.body.firstName,
@@ -54,7 +55,7 @@ const login = async (req, res) => {
     const isValidPassword = bcrypt.compare(req.body.password, user.password)
 
     if (!isValidPassword) {
-        res.status(401).json({ error: 'Wrong credentials' })
+        res.status(401).json({ error: 'Wrong credentials2' })
     } else {
         const token = jwt.sign(
             {
