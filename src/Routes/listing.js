@@ -9,6 +9,6 @@ const { extractToken } = require('../Utils/extractToken')
 
 router.post('/add', createListing)
 router.get('/all', getAlllistings)
-router.post('/mine', extractToken, userListings)
+router.post('/mine', userListings)
 
 module.exports = router
