@@ -14,6 +14,7 @@ const register = async (req, res) => {
     ) {
         res.status(400).json({ error: 'Missing fields' })
         console.log('erreur 400')
+        return
     }
     const hashedPassword = await bcrypt.hash(req.body.password + '', 10)
     try {
@@ -31,8 +32,10 @@ const register = async (req, res) => {
             .collection('user')
             .insertOne(user)
         res.status(201).json(result)
+        return
     } catch (error) {
         res.status(500).json(error)
+        return
     }
 }
 
@@ -59,6 +62,7 @@ const login = async (req, res) => {
     if (!isValidPassword) {
         res.status(401).json({ error: 'Wrong credentials2' })
         console.log('Mot de passe invalide');
+        return
     } else {
         const token = jwt.sign(
             {
@@ -74,6 +78,7 @@ const login = async (req, res) => {
         )
 
         res.status(200).json({ jwt: token, user:user.lastName })
+        return
         console.log(token, user.lastName );
     }
 }

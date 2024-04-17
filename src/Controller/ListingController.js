@@ -14,6 +14,7 @@ const createListing = async (req, res) => {
         !req.body.place
     ) {
         res.status(400).json({ error: 'Missing fields' })
+        return
     }
     const token = await extractToken(req)
     jwt.verify(token, process.env.SECRET_KEY, async (error, data)=>{
@@ -38,9 +39,10 @@ const createListing = async (req, res) => {
                 .collection('listing')
                 .insertOne(listing)
             res.status(201).json(result)
+            return
         } catch (error) {
-            res.status(500).json(error)
-            console.log('Error 500');
+            res.status(500).json({error: "error 500"})
+            return
         }
     }
 })
@@ -52,8 +54,10 @@ const getAlllistings = async (req, res) => {
         let listings = await client.db('BestTrip').collection('listing').find()
         let result = await listings.toArray()
         res.status(200).json(result)
+        return
     } catch (error) {
         res.status(500).json(error)
+        return
     }
 }
 
@@ -72,7 +76,7 @@ const userListings = async (req, res) => {
             let result = await listings.toArray()
 
             res.status(200).json(result)
-           
+            return
         }
     })
 }
@@ -117,6 +121,7 @@ const deleteListing = async (req, res) => {
                 }
                  catch (error) {
                     res.status(400).json('does not work mothafucker')
+                    return
                 }
                
             }     
@@ -155,10 +160,11 @@ const getOneListing = async  (req, res) => {
                 }
                 console.log('edit all good')
                 res.status(200).json(listing)
-                console.log('send');
+                return
 
             } catch (error) {
                 res.status(400).json('edit not good')
+                return
             }
             
         }
@@ -170,9 +176,18 @@ const editListing = async (req, res) => {
     jwt.verify(token, process.env.SECRET_KEY, async (error, data)=> {
         if (error) {
             res.status(401).json({ error: 'Unauthorized' })
-        
             return
         } else {
+            if (
+                !req.body.title ||
+                !req.body.description ||
+                !req.body.maxParticipant ||
+                !req.body.eventDate ||
+                !req.body.place
+            ) {
+                res.status(400).json({ error: 'Missing fields' })
+                return
+            }
             const image = req.body.image;
             const description = req.body.description;
             const title = req.body.title;
@@ -211,30 +226,14 @@ const editListing = async (req, res) => {
                         {_id: new ObjectId(req.params.id)},
                         { $set: {place: place, image: image, title: title, maxParticipant: maxParticipant, eventDate: eventDate,description: description, } }
                       )
-                      if (place == "") {
-                        listing.place = listing.place;
-                      }
-                      if (description == "") {
-                        listing.description = listing.description;
-                      }
-                      if (image == "") {
-                        listing.image = listing.image;
-                      }
-                      if (title == "") {
-                        listing.title = listing.title;
-                      }
-                      if (maxParticipant == "") {
-                        listing.maxParticipant = listing.description;
-                      }
-                      if (eventDate == "") {
-                        listing.eventDate = listing.eventDate;
-                      }
                       
                     res.status(200).json("Edit successfull !")
-                  return;
+                    console.log(list);
+                    return;
                 }
                  catch (error) {
                     res.status(400).json('does not work mothafucker')
+                    return
                 }
                
             }     
