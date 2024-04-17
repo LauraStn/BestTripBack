@@ -13,8 +13,9 @@ const register = async (req, res) => {
         !req.body.password
     ) {
         res.status(400).json({ error: 'Missing fields' })
+        console.log('erreur 400')
     }
-    const hashedPassword = await bcrypt.hash(req.body.password, 12)
+    const hashedPassword = await bcrypt.hash(req.body.password + '', 10)
     try {
         let user = new User(
             req.body.firstName,
@@ -38,6 +39,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
     if (!req.body.email || !req.body.password) {
         res.status(400).json({ error: 'Missing fields' })
+        console.log('missing fields');
         return
     }
 
@@ -48,13 +50,15 @@ const login = async (req, res) => {
 
     if (!user) {
         res.status(401).json({ error: 'Wrong credentials' })
+        console.log('wrong email');
         return
     }
 
     const isValidPassword = bcrypt.compare(req.body.password, user.password)
 
     if (!isValidPassword) {
-        res.status(401).json({ error: 'Wrong credentials' })
+        res.status(401).json({ error: 'Wrong credentials2' })
+        console.log('Mot de passe invalide');
     } else {
         const token = jwt.sign(
             {
@@ -69,7 +73,8 @@ const login = async (req, res) => {
             { expiresIn: '24h' }
         )
 
-        res.status(200).json({ jwt: token })
+        res.status(200).json({ jwt: token, user:user.lastName })
+        console.log(token, user.lastName );
     }
 }
 

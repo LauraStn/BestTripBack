@@ -6,7 +6,8 @@ class Listing {
         image,
         participant,
         maxParticipant,
-        eventDate
+        eventDate,
+        place
     ) {
         this.userId = userId
         this.title = title
@@ -15,6 +16,8 @@ class Listing {
         this.participant = participant
         this.maxParticipant = maxParticipant
         this.eventDate = eventDate
+        this.place = place
+
     }
 }
 module.exports = { Listing }
