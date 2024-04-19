@@ -235,11 +235,9 @@ const participate = async (req, res) => {
     const token = await extractToken(req)
     jwt.verify(token, process.env.SECRET_KEY, async (error, data)=> {
         if (error) {
-            res.status(401).json({ error: 'Unauthorized' })
+            res.status(401).json({ success:false, msg: "Not connected" })
             return
         } else {
-            // const participant = req.body.participant;
-
             const listing = await client
                 .db('BestTrip')
                 .collection('listing')
@@ -251,7 +249,7 @@ const participate = async (req, res) => {
                 .findOne({_id: new ObjectId(data.id)})
           
             if (!user || !listing) {
-                res.status(401).json({ error: 'Does not exist' })
+                res.status(400).json({ success:false, msg: "Connect before join" })
                 return
             }
             if(listing.participant === listing.maxParticipant){

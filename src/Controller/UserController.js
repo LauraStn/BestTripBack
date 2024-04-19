@@ -67,7 +67,6 @@ const login = async (req, res) => {
 
     if (!isValidPassword) {
         res.status(401).json({ error: 'Wrong credentials2' })
-        console.log("wrong2");
         return
     } else {
         const token = jwt.sign(
@@ -84,7 +83,6 @@ const login = async (req, res) => {
         )
 
         res.status(200).json({ jwt: token, user:user.lastName })
-        console.log('good');
         return
     }
 }
